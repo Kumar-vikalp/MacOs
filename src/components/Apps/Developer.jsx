@@ -37,8 +37,7 @@ const Developer = ({ windowId }) => {
       className="space-y-6"
     >
       <div className="text-center">
-        <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
-          VK
+        <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">          VK
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Vikalp Kumar</h1>
         <p className="text-gray-600 mb-4">Full Stack Developer & UI/UX Enthusiast</p>
@@ -71,12 +70,12 @@ const Developer = ({ windowId }) => {
       <div className="bg-gray-50 rounded-xl p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
         <p className="text-gray-600 leading-relaxed mb-4">
-          I'm a passionate full-stack developer with over 2 years of experience building scalable web applications 
-          and user interfaces. I love creating pixel-perfect designs and bringing them to life with clean, 
+          I'm a passionate full-stack developer with over 2 years of experience building scalable web applications
+          and user interfaces. I love creating pixel-perfect designs and bringing them to life with clean,
           efficient code.
         </p>
         <p className="text-gray-600 leading-relaxed">
-          When I'm not coding, you can find me exploring new technologies, contributing to open source projects, 
+          When I'm not coding, you can find me exploring new technologies, contributing to open source projects,
           or enjoying a good cup of coffee while reading about the latest in tech.
         </p>
       </div>
@@ -116,11 +115,10 @@ const Developer = ({ windowId }) => {
             <div>
               <h3 className="text-lg font-semibold text-gray-800">{project.name}</h3>
               <div className="flex items-center space-x-4 mt-1">
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  project.status === 'Active' ? 'bg-green-100 text-green-800' :
+                <span className={`px-2 py-1 text-xs rounded-full ${project.status === 'Active' ? 'bg-green-100 text-green-800' :
                   project.status === 'Beta' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-blue-100 text-blue-800'
-                }`}>
+                    'bg-blue-100 text-blue-800'
+                  }`}>
                   {project.status}
                 </span>
                 <div className="flex items-center space-x-1 text-gray-500">
@@ -140,9 +138,9 @@ const Developer = ({ windowId }) => {
               <GitBranch size={16} />
             </motion.a>
           </div>
-          
+
           <p className="text-gray-600 mb-4">{project.description}</p>
-          
+
           <div className="flex flex-wrap gap-2">
             {project.tech.map((tech) => (
               <span
@@ -267,13 +265,12 @@ const Developer = ({ windowId }) => {
         </motion.div> */}
       </div>
 
-      <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-        <div className="flex items-center justify-center space-x-2 mb-2">
-          <span className="text-gray-600">Made with</span>
-          <Heart size={16} className="text-red-500" />
-          <span className="text-gray-600">and lots of</span>
-          <Coffee size={16} className="text-brown-500" />
-        </div>
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">        <div className="flex items-center justify-center space-x-2 mb-2">
+        <span className="text-gray-600">Made with</span>
+        <Heart size={16} className="text-red-500" />
+        <span className="text-gray-600">and lots of</span>
+        <Coffee size={16} className="text-brown-500" />
+      </div>
         <p className="text-sm text-gray-500">
           This macOS simulator is a passion project showcasing modern web technologies
         </p>
@@ -296,8 +293,7 @@ const Developer = ({ windowId }) => {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center space-x-4">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-            LS
+          <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">            LS
           </div>
           <div>
             <h1 className="text-lg font-semibold text-gray-800">Developer Portfolio</h1>
@@ -313,11 +309,10 @@ const Developer = ({ windowId }) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 py-3 border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`flex items-center space-x-2 py-3 border-b-2 transition-colors ${activeTab === tab.id
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               <tab.icon size={16} />
               <span className="font-medium">{tab.label}</span>

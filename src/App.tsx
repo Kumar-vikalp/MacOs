@@ -1,76 +1,64 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PowerScreen from "./layouts/PowerScreen";
 import LockScreen from "./layouts/LockScreen";
-import Desktop from "./layouts/Desktop"; // Corrected import path
-import WindowManager from "./components/Window/WindowManager"; // Import WindowManager
+import Desktop from "./layouts/Desktop";
+import WindowManager from "./components/Window/WindowManager";
 
-const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute in milliseconds
+const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute
 
-function App() { // Changed to function component
-  const [stage, setStage] = useState<string | null>(null); // Explicitly type stage
-  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null); // Explicitly type timer ref
-  
+function App() {
+  const [stage, setStage] = useState<string | null>(null);
+  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Reset inactivity timer on any user activity
   const resetInactivityTimer = useCallback(() => {
-    // Clear existing timer
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
     }
     
-    // Only start timer when on desktop (not on power or lock screen)
     if (stage === "desktop") {
       inactivityTimerRef.current = setTimeout(() => {
         setStage("lock");
       }, INACTIVITY_TIMEOUT);
     }
   }, [stage]);
-  
+
   // Set up activity listeners
   useEffect(() => {
     if (stage !== "desktop") {
-      // Clear timer when not on desktop
       if (inactivityTimerRef.current) {
         clearTimeout(inactivityTimerRef.current);
         inactivityTimerRef.current = null;
       }
       return;
     }
-    
-    // Activity events to track
+
     const activityEvents = [
-      'mousedown',
-      'mousemove',
-      'keydown',
-      'scroll',
-      'touchstart',
-      'click',
-      'wheel'
+      'mousedown', 'mousemove', 'keydown', 
+      'scroll', 'touchstart', 'click', 'wheel'
     ];
     
-    // Add listeners for all activity events
     activityEvents.forEach(event => {
       window.addEventListener(event, resetInactivityTimer, { passive: true });
     });
     
-    // Start the initial timer
     resetInactivityTimer();
     
     return () => {
-      // Clean up listeners
       activityEvents.forEach(event => {
         window.removeEventListener(event, resetInactivityTimer);
       });
-      
-      // Clear timer on unmount
       if (inactivityTimerRef.current) {
         clearTimeout(inactivityTimerRef.current);
       }
     };
   }, [stage, resetInactivityTimer]);
- 
+
+  // Persist and Restore OS State
   useEffect(() => {
     const savedState = localStorage.getItem("os_state");
     const savedTime = localStorage.getItem("os_state_time");
+    
     if (!savedState || !savedTime) {
       setStage("power");
       return;
@@ -81,27 +69,20 @@ function App() { // Changed to function component
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (now - lastVisit < oneDay) {
-      if (savedState === "power") {
-        setStage("power");
-      } else if (savedState === "desktop") {
-        setStage("desktop");
-      } else {
-        setStage("lock");
-      }
-      return;
+      setStage(savedState);
+    } else {
+      setStage("power");
     }
-    setStage("power");
   }, []);
 
+  // Global Context Menu Disable
   useEffect(() => {
-    const disableRightClick = (e: MouseEvent) => e.preventDefault(); // Explicitly type event
+    const disableRightClick = (e: MouseEvent) => e.preventDefault();
     document.addEventListener("contextmenu", disableRightClick);
-
-    return () => {
-      document.removeEventListener("contextmenu", disableRightClick);
-    };
+    return () => document.removeEventListener("contextmenu", disableRightClick);
   }, []);
 
+  // Update Persistence
   useEffect(() => {
     if (!stage) return;
     localStorage.setItem("os_state", stage);
@@ -112,25 +93,29 @@ function App() { // Changed to function component
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black">
-      {stage === "power" && <PowerScreen goNext={() => setStage("lock")} />}
+      {/* 1. Initial Power/Boot Screen */}
+      {stage === "power" && (
+        <PowerScreen goNext={() => setStage("lock")} />
+      )}
       
-      {/* Desktop renders behind lock screen so it's visible during slide-up */}
+      {/* 2. The Desktop Layer (Renders behind Lock for slide transitions) */}
       {(stage === "lock" || stage === "desktop") && (
         <div className="absolute inset-0">
           <Desktop setStage={setStage} isLocked={stage === "lock"} />
         </div>
       )}
       
-      {/* Lock screen slides up to reveal desktop */}
+      {/* 3. The Window Layer (ONLY visible when desktop is active) */}
+      {stage === "desktop" && (
+        <WindowManager />
+      )}
+      
+      {/* 4. The Lock Screen Overlay (Highest Z-index) */}
       {stage === "lock" && (
         <div className="absolute inset-0 z-50">
           <LockScreen goNext={() => setStage("desktop")} />
         </div>
       )}
-
-      {/* WindowManager should always be present to render windows */}
-      {/* Its opacity and pointer-events are controlled by the Desktop component */}
-      <WindowManager />
     </div>
   );
 }

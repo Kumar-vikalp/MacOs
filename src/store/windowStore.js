@@ -130,13 +130,19 @@ const useWindowStore = create(
       getOpenApps: () => {
         return [...new Set(get().windows.map(w => w.appId))];
       },
+
+      // New action to close all windows
+      closeAllWindows: () => {
+        set({ windows: [], activeWindowId: null });
+      },
     }),
     {
       name: 'macos-windows',
       partialize: (state) => ({
         windows: state.windows.map(w => ({
           ...w,
-          component: undefined, // Don't persist React components
+          // Removed the line below to persist the component string
+          // component: undefined, // Don't persist React components
         })),
       }),
     }

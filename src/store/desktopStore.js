@@ -14,7 +14,9 @@ const defaultWallpapers = [
   'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop',
   'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&h=1080&fit=crop',
   'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+  '/wallpaper/sana\'sKitty.jpg', // Add your local wallpaper here
 ];
+
 
 const useDesktopStore = create(
   persist(

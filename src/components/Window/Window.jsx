@@ -1,19 +1,26 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import Draggable from 'react-draggable';
 import { Resizable } from 're-resizable';
 import useWindowStore from '../../store/windowStore';
 
 const Window = ({ window, children }) => {
-  const draggableRef = useRef(null);
+  const windowRef = useRef(null);
   const [isResizing, setIsResizing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [localPos, setLocalPos] = useState({ x: window.x, y: window.y });
+
   const { closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindow } = useWindowStore();
 
+  // Sync local position with global store position when window.x/y changes
+  useEffect(() => {
+    setLocalPos({ x: window.x, y: window.y });
+  }, [window.x, window.y]);
+
+  // Handle Keyboard Shortcuts (Cmd+W, Cmd+M)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.metaKey || e.ctrlKey) {
-        switch (e.key) {
+        switch (e.key.toLowerCase()) {
           case 'w':
             e.preventDefault();
             closeWindow(window.id);
@@ -21,6 +28,8 @@ const Window = ({ window, children }) => {
           case 'm':
             e.preventDefault();
             minimizeWindow(window.id);
+            break;
+          default:
             break;
         }
       }
@@ -34,20 +43,43 @@ const Window = ({ window, children }) => {
     focusWindow(window.id);
   };
 
-  const handleDragStart = (e, data) => {
+  const handleMouseDown = (e) => {
+    // Only start drag if not maximized and not clicking on traffic lights
+    if (window.isMaximized || e.target.closest('.traffic-lights')) return;
+
     setIsDragging(true);
-  };
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialX = localPos.x;
+    const initialY = localPos.y;
 
-  const handleDrag = (e, data) => {
-    if (!window.isMaximized && !isResizing) {
-      e.preventDefault();
-      e.stopPropagation();
-      updateWindow(window.id, { x: data.x, y: data.y });
-    }
-  };
+    const handleMouseMove = (moveEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaY = moveEvent.clientY - startY;
 
-  const handleDragStop = (e, data) => {
-    setIsDragging(false);
+      let newX = initialX + deltaX;
+      let newY = initialY + deltaY;
+
+      // Boundary checks
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      // Keep window within viewport, ensuring title bar is always visible
+      newX = Math.max(0, Math.min(newX, viewportWidth - window.width));
+      newY = Math.max(24, Math.min(newY, viewportHeight - window.height - 80)); // 24px for menubar, 80px for dock
+
+      setLocalPos({ x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      updateWindow(window.id, { x: localPos.x, y: localPos.y });
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleResize = (e, direction, ref, delta, position) => {
@@ -58,132 +90,109 @@ const Window = ({ window, children }) => {
     });
   };
 
-  const handleDoubleClickTitleBar = () => {
-    maximizeWindow(window.id);
+  const isMaximized = window.isMaximized;
+
+  // Define dynamic styles based on window state
+  const containerStyle = {
+    zIndex: window.zIndex,
+    left: isMaximized ? 0 : localPos.x,
+    top: isMaximized ? 24 : localPos.y, // 24px is the standard MenuBar height
   };
 
-  const windowStyle = window.isMaximized
-    ? { x: 0, y: 24, width: '100vw', height: 'calc(100vh - 24px - 80px)' }
-    : { x: window.x, y: window.y, width: window.width, height: window.height };
+  const contentSize = {
+    width: isMaximized ? '100vw' : window.width,
+    height: isMaximized ? 'calc(100vh - 104px)' : window.height, // Subtract MenuBar (24) + Dock (80)
+  };
 
   return (
-    <Draggable
-      nodeRef={draggableRef}
-      handle=".window-header"
-      position={{ x: windowStyle.x, y: windowStyle.y }}
-      onStart={handleDragStart}
-      onDrag={handleDrag}
-      onStop={handleDragStop}
-      disabled={window.isMaximized || isResizing}
-      cancel=".traffic-lights"
+    <motion.div
+      ref={windowRef}
+      className="absolute"
+      style={containerStyle}
+      onClick={handleFocus}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        // We animate width/height here for smooth maximize transition
+        width: contentSize.width,
+        height: contentSize.height
+      }}
+      exit={{ scale: 0.9, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+      // Removed framer-motion's drag props
     >
-      <motion.div
-        ref={draggableRef}
-        className="absolute"
-        style={{ zIndex: window.zIndex }}
-        onClick={handleFocus}
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      <Resizable
+        size={contentSize}
+        onResize={handleResize}
+        onResizeStart={() => setIsResizing(true)}
+        onResizeStop={() => setIsResizing(false)}
+        minWidth={window.minWidth || 300}
+        minHeight={window.minHeight || 200}
+        enable={!isMaximized ? {
+          top: true, right: true, bottom: true, left: true,
+          topRight: true, bottomRight: true, bottomLeft: true, topLeft: true
+        } : false}
+        handleStyles={{
+          bottomRight: { bottom: 0, right: 0, width: 15, height: 15, cursor: 'se-resize' }
+        }}
       >
-        <Resizable
-          size={{ width: windowStyle.width, height: windowStyle.height }}
-          onResize={handleResize}
-          onResizeStart={() => setIsResizing(true)}
-          onResizeStop={() => setIsResizing(false)}
-          minWidth={window.minWidth}
-          minHeight={window.minHeight}
-          enable={!window.isMaximized ? {
-            top: true,
-            right: true,
-            bottom: true,
-            left: true,
-            topRight: true,
-            bottomRight: true,
-            bottomLeft: true,
-            topLeft: true,
-          } : false}
-          handleStyles={{
-            top: { cursor: 'ns-resize', background: 'transparent' },
-            right: { cursor: 'ew-resize', background: 'transparent' },
-            bottom: { cursor: 'ns-resize', background: 'transparent' },
-            left: { cursor: 'ew-resize', background: 'transparent' },
-            topRight: { cursor: 'ne-resize', background: 'transparent' },
-            bottomRight: {
-              bottom: 0,
-              right: 0,
-              width: 20,
-              height: 20,
-              cursor: 'se-resize',
-              background: 'transparent'
-            },
-            bottomLeft: { cursor: 'sw-resize', background: 'transparent' },
-            topLeft: { cursor: 'nw-resize', background: 'transparent' }
+        <div 
+          className="w-full h-full bg-white/95 backdrop-blur-xl rounded-xl overflow-hidden border border-white/20 flex flex-col"
+          style={{
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
           }}
         >
+          {/* Window Header */}
           <div 
-            className="w-full h-full bg-white/95 backdrop-blur-xl rounded-xl overflow-hidden border border-white/20"
-            style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-            }}
+            className="window-header h-8 bg-gradient-to-b from-gray-100/90 to-gray-50/90 flex items-center justify-between px-4 border-b border-gray-200/50 backdrop-blur-sm select-none shrink-0"
+            onDoubleClick={() => maximizeWindow(window.id)}
+            onMouseDown={handleMouseDown} // Re-added native mouse down for dragging
+            style={{ cursor: isMaximized ? 'default' : (isDragging ? 'grabbing' : 'grab') }}
           >
-            {/* Window Header */}
-            <div 
-              className="window-header h-8 bg-gradient-to-b from-gray-100/90 to-gray-50/90 flex items-center justify-between px-4 border-b border-gray-200/50 backdrop-blur-sm select-none"
-              onDoubleClick={handleDoubleClickTitleBar}
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-            >
-              {/* Traffic Lights */}
-              <div className="traffic-lights flex items-center space-x-2">
-                <motion.button
-                  onClick={(e) => { e.stopPropagation(); closeWindow(window.id); }}
-                  className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors relative group"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-red-400 to-red-600" />
-                  <div className="absolute inset-0.5 rounded-full bg-gradient-to-b from-red-300 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="absolute inset-0 flex items-center justify-center text-red-900 text-xs opacity-0 group-hover:opacity-100 transition-opacity">×</span>
-                </motion.button>
-                <motion.button
-                  onClick={(e) => { e.stopPropagation(); minimizeWindow(window.id); }}
-                  className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors relative group"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600" />
-                  <div className="absolute inset-0.5 rounded-full bg-gradient-to-b from-yellow-300 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="absolute inset-0 flex items-center justify-center text-yellow-900 text-xs opacity-0 group-hover:opacity-100 transition-opacity">−</span>
-                </motion.button>
-                <motion.button
-                  onClick={(e) => { e.stopPropagation(); maximizeWindow(window.id); }}
-                  className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors relative group"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-green-400 to-green-600" />
-                  <div className="absolute inset-0.5 rounded-full bg-gradient-to-b from-green-300 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="absolute inset-0 flex items-center justify-center text-green-900 text-xs opacity-0 group-hover:opacity-100 transition-opacity">+</span>
-                </motion.button>
-              </div>
+            {/* Traffic Lights */}
+            <div className="traffic-lights flex items-center space-x-2 z-50">
+              <button
+                onClick={(e) => { e.stopPropagation(); closeWindow(window.id); }}
+                className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors relative group overflow-hidden"
+              >
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-red-400 to-red-600" />
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-red-900 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
+              </button>
               
-              {/* Window Title */}
-              <div className="text-sm font-medium text-gray-700 absolute left-1/2 transform -translate-x-1/2 select-none">
-                {window.title}
-              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); minimizeWindow(window.id); }}
+                className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors relative group overflow-hidden"
+              >
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600" />
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-yellow-900 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
+              </button>
               
-              <div className="w-16" />
+              <button
+                onClick={(e) => { e.stopPropagation(); maximizeWindow(window.id); }}
+                className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors relative group overflow-hidden"
+              >
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-green-400 to-green-600" />
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-green-900 opacity-0 group-hover:opacity-100 transition-opacity">+</span>
+              </button>
             </div>
-
-            {/* Window Content */}
-            <div className="h-full pb-8 overflow-hidden">
-              {children}
+            
+            {/* Window Title */}
+            <div className="text-[13px] font-medium text-gray-700 absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
+              {window.title}
             </div>
+            
+            {/* Spacer for layout balance */}
+            <div className="w-12" />
           </div>
-        </Resizable>
-      </motion.div>
-    </Draggable>
+
+          {/* Window Content Area */}
+          <div className="flex-1 overflow-auto relative">
+            {children}
+          </div>
+        </div>
+      </Resizable>
+    </motion.div>
   );
 };
 

@@ -13,7 +13,9 @@ const SAMPLE_IMAGES = [
   'https://4kwallpapers.com/images/walls/thumbs_3t/11577.jpeg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/24073.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/1432.jpg',
-  'https://4kwallpapers.com/images/walls/thumbs_3t/8133.jpg'
+  'https://4kwallpapers.com/images/walls/thumbs_3t/8133.jpg',
+  '/wallpaper/sana\'sKitty.jpg', // Added local wallpaper
+  '/wallpaper/Vikalp.jpg', // Added local wallpaper
 ];
 
 const sidebarItems = [

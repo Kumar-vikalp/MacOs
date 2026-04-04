@@ -1,11 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import useDesktopStore from '../../store/desktopStore';
 import useFileSystemStore from '../../store/fileSystemStore';
+import useWindowStore from '../../store/windowStore'; // Import useWindowStore
 
 const ContextMenu = ({ x, y, onClose }) => {
   const menuRef = useRef(null);
   const { toggleWallpaperModal } = useDesktopStore();
   const { createFolder } = useFileSystemStore();
+  const { closeAllWindows, openWindow } = useWindowStore(); // Get actions from window store
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -31,6 +33,16 @@ const ContextMenu = ({ x, y, onClose }) => {
     onClose();
   };
 
+  const handleCloseAllWindows = () => {
+    closeAllWindows();
+    onClose();
+  };
+
+  const handleOpenDeveloper = () => {
+    openWindow('developer', 'Developer', 'Developer');
+    onClose();
+  };
+
   const menuItems = [
     { label: 'New Folder', action: handleNewFolder },
     { divider: true },
@@ -38,6 +50,9 @@ const ContextMenu = ({ x, y, onClose }) => {
     { label: 'Get Info', action: () => console.log('Get Info') },
     { divider: true },
     { label: 'Arrange By', submenu: ['Name', 'Date Modified', 'Size', 'Kind'] },
+    { divider: true }, // New divider
+    { label: 'Close All Windows', action: handleCloseAllWindows }, // New button
+    { label: 'Developer', action: handleOpenDeveloper }, // New button
   ];
 
   return (

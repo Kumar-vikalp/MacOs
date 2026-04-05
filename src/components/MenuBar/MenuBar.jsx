@@ -5,12 +5,34 @@ import { Apple, Wifi, Battery } from 'lucide-react';
 import AppleMenu from './AppleMenu';
 import BatteryIndicator from './BatteryIndicator';
 import WifiMenu from './WifiMenu';
+import { finder_menu_config } from '../../config/menu.config';
+import MenuDropdown from './MenuDropdown';
 
 const MenuBar = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showAppleMenu, setShowAppleMenu] = useState(false);
   const [showBatteryMenu, setShowBatteryMenu] = useState(false);
   const [showWifiMenu, setShowWifiMenu] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [menuRect, setMenuRect] = useState({ left: 0 });
+
+  const handleMenuClick = (menuId, event) => {
+    if (activeMenu === menuId) {
+      setActiveMenu(null);
+    } else {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setMenuRect(rect);
+      setActiveMenu(menuId);
+    }
+  };
+
+  const handleMenuHover = (menuId, event) => {
+    if (activeMenu !== null && activeMenu !== menuId) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setMenuRect(rect);
+      setActiveMenu(menuId);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -45,14 +67,29 @@ const MenuBar = () => {
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs">
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">Finder</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">File</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">Edit</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">View</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">Go</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">Window</span>
-          <span className="hover:bg-white/10 px-2 py-1 rounded transition-colors cursor-pointer">Help</span>
+        <div className="flex items-center space-x-1 text-xs px-1">
+          {Object.entries(finder_menu_config).map(([key, config]) => (
+            <div
+              key={key}
+              className={`px-3 py-1 rounded transition-colors cursor-pointer font-semibold ${
+                activeMenu === key ? 'bg-white/20' : 'hover:bg-white/10'
+              }`}
+              onClick={(e) => handleMenuClick(key, e)}
+              onMouseEnter={(e) => handleMenuHover(key, e)}
+            >
+              {config.title}
+            </div>
+          ))}
+          
+          <AnimatePresence>
+            {activeMenu && finder_menu_config[activeMenu] && (
+              <MenuDropdown 
+                config={finder_menu_config[activeMenu]} 
+                xOffset={menuRect.left} 
+                onClose={() => setActiveMenu(null)} 
+              />
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

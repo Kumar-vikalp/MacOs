@@ -58,17 +58,18 @@ const ContextMenu = ({ x, y, onClose }) => {
   return (
     <div
       ref={menuRef}
-      className="fixed glassmorphism rounded-lg shadow-lg py-1 text-white text-sm z-50 min-w-48"
+      className="fixed bg-[#f4f5f5]/80 dark:bg-[#1c1c1e]/80 backdrop-blur-[40px] border border-white/20 dark:border-white/10 rounded-lg shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] py-1 text-black dark:text-white text-[13px] z-50 min-w-[220px]"
       style={{ left: x, top: y }}
     >
       {menuItems.map((item, index) => (
         item.divider ? (
-          <div key={index} className="h-px bg-white/20 my-1" />
+          <div key={index} className="h-px bg-black/10 dark:bg-white/10 my-1 mx-0" />
         ) : (
           <button
             key={index}
             onClick={item.action}
-            className="w-full text-left px-4 py-2 hover:bg-white/20 transition-colors"
+            className="w-full flex text-left px-3 py-1 hover:bg-[#007AFF] hover:text-white transition-colors rounded-sm mx-1"
+            style={{ width: 'calc(100% - 8px)' }}
           >
             {item.label}
           </button>

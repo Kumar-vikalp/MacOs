@@ -19,7 +19,7 @@ const BatteryIndicator = ({ onClose }) => {
   return (
     <motion.div
       ref={menuRef}
-      className="absolute top-full right-0 mt-1 w-64 glassmorphism rounded-lg shadow-lg py-3 px-4 text-white text-sm"
+      className="absolute top-[35px] right-2 w-[320px] bg-[#f4f5f5]/80 dark:bg-[#1c1c1e]/80 backdrop-blur-[40px] border border-white/20 dark:border-white/10 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] p-4 text-black dark:text-white text-sm"
       initial={{ opacity: 0, y: -10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}

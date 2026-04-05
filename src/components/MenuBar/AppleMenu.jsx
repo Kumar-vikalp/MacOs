@@ -32,7 +32,7 @@ const AppleMenu = ({ onClose }) => {
   return (
     <div
       ref={menuRef}
-      className="absolute top-full left-0 mt-1 w-48 glassmorphism rounded-lg shadow-lg py-1 text-white text-sm animate-fade-in"
+      className="absolute top-full left-0 mt-1 w-56 bg-[#f4f5f5]/80 dark:bg-[#1c1c1e]/80 backdrop-blur-[40px] border border-white/20 dark:border-white/10 rounded-lg shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] py-1 text-sm text-black dark:text-white animate-fade-in"
     >
       {menuItems.map((item, index) => (
         item.divider ? (

@@ -42,13 +42,11 @@ const MenuBar = () => {
         batteryObj = bat;
         updateBatteryInfo(bat);
 
-        // Listen for real-time changes
         bat.addEventListener('levelchange', () => updateBatteryInfo(bat));
         bat.addEventListener('chargingchange', () => updateBatteryInfo(bat));
       });
     }
 
-    // Cleanup listeners
     return () => {
       if (batteryObj) {
         batteryObj.removeEventListener('levelchange', () => updateBatteryInfo(batteryObj));
@@ -56,7 +54,6 @@ const MenuBar = () => {
       }
     };
   }, []);
-  // -------------------------------
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -68,17 +65,20 @@ const MenuBar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-[24px] bg-black/15 dark:bg-[#1a1a1a]/30 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-2.5 text-white z-[100] select-none">
+    /* h-[24px] -> h-6 | z-[100] -> z-100 */
+    <div className="fixed top-0 left-0 right-0 h-6 bg-black/15 dark:bg-[#1a1a1a]/30 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-2.5 text-white z-100 select-none">
       <div className="flex items-center">
         <div className="relative flex items-center">
           <button
             onClick={() => setShowAppleMenu(!showAppleMenu)}
-            className="flex items-center justify-center w-8 h-[20px] rounded-[4px] hover:bg-white/20 transition-colors"
+            /* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */
+            className="flex items-center justify-center w-8 h-5 rounded-sm hover:bg-white/20 transition-colors"
           >
             <img
               src="/apple-logo.svg"
               alt="Apple"
-              className="w-[14px] h-[14px] invert brightness-[100] contrast-[100]"
+              /* w-[14px] -> w-3.5 | h-[14px] -> h-3.5 */
+              className="w-3.5 h-3.5 invert brightness-[100] contrast-[100]"
             />
           </button>
           <AnimatePresence>
@@ -86,13 +86,14 @@ const MenuBar = () => {
           </AnimatePresence>
         </div>
 
-        {/* Dynamic App Menus */}
         <div className="flex items-center ml-1 text-[13px] font-semibold tracking-tight">
           {Object.entries(finder_menu_config).map(([key, config]) => (
             <div
               key={key}
-              className={`px-3 h-[20px] flex items-center rounded-[4px] transition-colors cursor-default ${activeMenu === key ? 'bg-white/20' : 'hover:bg-white/20'
-                }`}
+              /* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */
+              className={`px-3 h-5 flex items-center rounded-sm transition-colors cursor-default ${
+                activeMenu === key ? 'bg-white/20' : 'hover:bg-white/20'
+              }`}
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 setMenuRect(rect);
@@ -105,9 +106,7 @@ const MenuBar = () => {
         </div>
       </div>
 
-      {/* Right Side Status Icons */}
       <div className="flex items-center gap-1">
-        {/* Music Icon - Only show when playing */}
         <AnimatePresence>
           {isPlaying && (
             <motion.div
@@ -118,8 +117,8 @@ const MenuBar = () => {
             >
               <button
                 onClick={handleMusicIconClick}
-                className="flex items-center justify-center w-7 h-[20px] rounded-[4px] hover:bg-white/15 transition-colors cursor-pointer"
-                style={{ cursor: 'pointer' }}
+                /* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */
+                className="flex items-center justify-center w-7 h-5 rounded-sm hover:bg-white/15 transition-colors cursor-pointer"
               >
                 <CirclePlay size={15} strokeWidth={2} className="text-red-400" />
                 <motion.div
@@ -135,8 +134,8 @@ const MenuBar = () => {
         <div className="relative">
           <button
             onClick={() => setShowWifiMenu(!showWifiMenu)}
-            className="flex items-center justify-center w-7 h-[20px] rounded-[4px] hover:bg-white/15 transition-colors cursor-pointer"
-            style={{ cursor: 'pointer' }}
+            /* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */
+            className="flex items-center justify-center w-7 h-5 rounded-sm hover:bg-white/15 transition-colors cursor-pointer"
           >
             <Wifi size={15} strokeWidth={2.5} />
           </button>
@@ -145,13 +144,13 @@ const MenuBar = () => {
           </AnimatePresence>
         </div>
 
-        {/* Real-Time Battery Display */}
         <div className="relative">
           <button
             onClick={() => setShowBatteryMenu(!showBatteryMenu)}
-            className={`flex items-center gap-1.5 px-2 h-[20px] rounded-[4px] transition-colors ${showBatteryMenu ? 'bg-white/20' : 'hover:bg-white/15'
-              } cursor-pointer`}
-            style={{ cursor: 'pointer' }}
+            /* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */
+            className={`flex items-center gap-1.5 px-2 h-5 rounded-sm transition-colors ${
+              showBatteryMenu ? 'bg-white/20' : 'hover:bg-white/15'
+            } cursor-pointer`}
           >
             <span className="text-[12px] font-medium tracking-tighter">{battery.level}%</span>
             <div className="relative flex items-center">
@@ -165,14 +164,14 @@ const MenuBar = () => {
             {showBatteryMenu && (
               <BatteryIndicator
                 onClose={() => setShowBatteryMenu(false)}
-                // Pass the data down if you want to avoid calling the API twice
                 realBattery={battery}
               />
             )}
           </AnimatePresence>
         </div>
 
-        <div className="px-2 h-[20px] flex items-center rounded-[4px] hover:bg-white/15 transition-colors text-[12.5px] font-medium tracking-tight">
+        {/* h-[20px] -> h-5 | rounded-[4px] -> rounded-sm */}
+        <div className="px-2 h-5 flex items-center rounded-sm hover:bg-white/15 transition-colors text-[12.5px] font-medium tracking-tight">
           {format(currentTime, 'EEE MMM d h:mm a')}
         </div>
       </div>

@@ -30,19 +30,11 @@ const AppleMusic = ({ windowId }) => {
   useEffect(() => {
     if (audioRef.current && currentSong) {
       const audio = audioRef.current;
-      const audioUrl = currentSong.formats[0].url;
       
-      // Check if it's a direct MP3/audio file or HLS stream
-      if (audioUrl.endsWith('.mp3') || audioUrl.endsWith('.wav') || audioUrl.endsWith('.ogg')) {
-        // Direct audio file - set src directly
-        audio.src = audioUrl;
-        if (isPlaying) {
-          audio.play().catch(console.error);
-        }
-      } else if (window.Hls && window.Hls.isSupported()) {
-        // HLS stream - use HLS.js
+      // Load HLS if available
+      if (window.Hls && window.Hls.isSupported()) {
         const hls = new window.Hls();
-        hls.loadSource(audioUrl);
+        hls.loadSource(currentSong.formats[0].url);
         hls.attachMedia(audio);
         hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
           if (isPlaying) {
@@ -51,8 +43,7 @@ const AppleMusic = ({ windowId }) => {
         });
         return () => hls.destroy();
       } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-        // Native HLS support (Safari)
-        audio.src = audioUrl;
+        audio.src = currentSong.formats[0].url;
       }
     }
   }, [currentSong]);

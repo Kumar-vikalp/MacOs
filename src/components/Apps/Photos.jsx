@@ -74,9 +74,9 @@ const Photos = ({ windowId }) => {
 
     window.addEventListener("os_file_download", handleDownload);
     window.addEventListener("focus", syncDownloads);
-    
+
     syncDownloads();
-    
+
     return () => {
       window.removeEventListener("os_file_download", handleDownload);
       window.removeEventListener("focus", syncDownloads);
@@ -100,7 +100,7 @@ const Photos = ({ windowId }) => {
   }, [selected, selectedIndex, activeTab]);
 
   const toggleFavorite = (img) => {
-    setFavorites(prev => 
+    setFavorites(prev =>
       prev.includes(img) ? prev.filter(f => f !== img) : [...prev, img]
     );
   };
@@ -115,9 +115,9 @@ const Photos = ({ windowId }) => {
 
   const downloadImage = () => {
     if (!selected) return;
-    
+
     const imageName = selected.split('/').pop();
-    
+
     const newFile = {
       id: Date.now().toString(),
       name: imageName,
@@ -127,16 +127,16 @@ const Photos = ({ windowId }) => {
       size: null,
       source: 'Photos'
     };
-    
+
     const existingDownloads = JSON.parse(localStorage.getItem("os_downloads") || "[]");
     const updatedDownloads = [newFile, ...existingDownloads.filter(f => f.id !== newFile.id)];
     localStorage.setItem("os_downloads", JSON.stringify(updatedDownloads));
-    
+
     const downloadEvent = new CustomEvent('os_file_download', {
       detail: newFile
     });
     window.dispatchEvent(downloadEvent);
-    
+
     setDownloadNotification(imageName);
     setTimeout(() => setDownloadNotification(null), 3000);
   };
@@ -173,7 +173,7 @@ const Photos = ({ windowId }) => {
 
   return (
     <div className="relative flex h-full overflow-hidden" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" }}>
-      
+
       {/* Sidebar */}
       <aside className="w-44 flex flex-col border-r" style={{ background: "rgba(246, 246, 246, 0.9)", borderColor: "rgba(224, 224, 224, 0.5)" }}>
         <div className="p-3 border-b" style={{ borderColor: "rgba(224, 224, 224, 0.5)" }}>
@@ -188,11 +188,10 @@ const Photos = ({ windowId }) => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] transition-all ${
-                activeTab === item.id 
-                  ? "bg-[#007AFF] text-white" 
+              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] transition-all ${activeTab === item.id
+                  ? "bg-[#007AFF] text-white"
                   : "text-gray-600 hover:bg-black/5"
-              }`}
+                }`}
             >
               <item.icon size={14} />
               <span>{item.label}</span>
@@ -271,23 +270,22 @@ const Photos = ({ windowId }) => {
                     className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
-                  
+
                   {favorites.includes(img) && (
                     <div className="absolute top-1 right-1">
                       <BsHeartFill size={12} className="text-white drop-shadow-lg" />
                     </div>
                   )}
 
-                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(img);
-                      }}
-                      className="text-white"
-                    >
-                      {favorites.includes(img) ? <BsHeartFill size={14} /> : <BsHeart size={14} />}
-                    </button>
+                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">                    <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(img);
+                    }}
+                    className="text-white"
+                  >
+                    {favorites.includes(img) ? <BsHeartFill size={14} /> : <BsHeart size={14} />}
+                  </button>
                   </div>
                 </motion.div>
               ))}

@@ -7,7 +7,50 @@ const Calendar = ({ windowId }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState(() => {
     const saved = localStorage.getItem('calendar_events');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 'event-1',
+        title: 'Team Standup',
+        date: new Date().toISOString(),
+        time: '09:00',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'event-2',
+        title: 'Project Review Meeting',
+        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '14:00',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'event-3',
+        title: 'Client Presentation',
+        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '10:30',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'event-4',
+        title: 'Code Review Session',
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '15:30',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'event-5',
+        title: 'Sprint Planning',
+        date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '11:00',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'event-6',
+        title: 'Lunch with Sarah',
+        date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        time: '12:30',
+        createdAt: new Date().toISOString()
+      }
+    ];
   });
   const [selectedDate, setSelectedDate] = useState(null);
   const [showEventModal, setShowEventModal] = useState(false);

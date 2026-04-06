@@ -273,7 +273,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
             <div
               key={app.id}
               ref={(el) => { iconRefs.current[index] = el; }}
-              className="absolute cursor-pointer flex flex-col items-center justify-end"
+              className="absolute flex flex-col items-center justify-end"
               title={app.name}
               onClick={() => handleAppClick(app.id, index)}
               style={{
@@ -282,7 +282,8 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
                 width: `${scaledSize}px`,
                 height: `${scaledSize}px`,
                 transformOrigin: 'bottom center',
-                zIndex: Math.round(scale * 10)
+                zIndex: Math.round(scale * 10),
+                cursor: 'pointer'
               }}
             >
               <img
@@ -290,8 +291,9 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
                 alt={app.name}
                 width={scaledSize}
                 height={scaledSize}
-                className="object-contain"
+                className="object-contain cursor-pointer"
                 style={{
+                  cursor: 'pointer',
                   filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseIconSize * 0.05) : Math.max(1, baseIconSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseIconSize * 0.1) : Math.max(2, baseIconSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
                 }}
               />

@@ -14,6 +14,7 @@ const Dock = () => {
     { id: 'finder', name: 'Finder', icon: '/icons/finder.png', component: 'Finder' },
     { id: 'launchpad', name: 'Launchpad', icon: '/icons/launchpad.png', component: 'Launchpad' },
     { id: 'safari', name: 'Safari', icon: '/icons/safari.png', component: 'Safari' },
+    { id: 'applemusic', name: 'Apple Music', icon: '/icons/music.png', component: 'AppleMusic' },
     { id: 'notes', name: 'Notes', icon: '/icons/notes.png', component: 'Notes' },
     { id: 'calculator', name: 'Calculator', icon: '/icons/calculator.png', component: 'Calculator' },
     { id: 'calendar', name: 'Calendar', icon: '/icons/calendar.png', component: 'Calendar' },

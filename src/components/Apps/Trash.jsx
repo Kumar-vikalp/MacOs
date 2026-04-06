@@ -6,7 +6,32 @@ import { BsTrash, BsImage, BsFileEarmark } from "react-icons/bs";
 const Trash = ({ windowId }) => {
   const [trashedFiles, setTrashedFiles] = useState(() => {
     const saved = localStorage.getItem("os_trash");
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 'trash-1',
+        name: 'Old Project Files.zip',
+        type: 'archive',
+        size: 15728640, // 15MB
+        trashedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        url: null
+      },
+      {
+        id: 'trash-2',
+        name: 'Screenshot 2024-01-15.png',
+        type: 'image',
+        size: 2048576, // 2MB
+        trashedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        url: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=400'
+      },
+      {
+        id: 'trash-3',
+        name: 'Draft Document.docx',
+        type: 'document',
+        size: 524288, // 512KB
+        trashedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        url: null
+      }
+    ];
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);

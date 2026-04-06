@@ -17,6 +17,7 @@ import Terminal from '../Apps/Terminal';
 import Developer from '../Apps/Developer';
 import Weather from '../Apps/Weather'; // New import
 import AppleTv from '../Apps/AppleTv';
+import AppleMusic from '../Apps/AppleMusic';
 
 const appComponents = {
   Finder,
@@ -33,10 +34,11 @@ const appComponents = {
   Developer,
   Weather, // New app component
   AppleTv,
+  AppleMusic,
 };
 
 const WindowManager = () => {
-  const { windows } = useWindowStore();
+  const { windows, activeWindowId } = useWindowStore();
 
   return (
     <>
@@ -47,7 +49,7 @@ const WindowManager = () => {
           const AppComponent = appComponents[window.component];
           
           return (
-            <Window key={window.id} window={window}>
+            <Window key={window.id} window={window} isActive={window.id === activeWindowId}>
               {AppComponent ? <AppComponent windowId={window.id} /> : <div>App not found</div>}
             </Window>
           );

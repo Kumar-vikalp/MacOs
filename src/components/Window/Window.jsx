@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Resizable } from 're-resizable';
 import useWindowStore from '../../store/windowStore';
 
-const Window = ({ window, children }) => {
+const Window = ({ window, children, isActive }) => {
   const windowRef = useRef(null);
   const [isResizing, setIsResizing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -140,45 +140,62 @@ const Window = ({ window, children }) => {
         <div 
           className="w-full h-full bg-white/95 backdrop-blur-xl rounded-xl overflow-hidden border border-white/20 flex flex-col"
           style={{
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            boxShadow: isActive 
+              ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              : '0 15px 30px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
           }}
         >
           {/* Window Header */}
           <div 
-            className="window-header h-8 bg-gradient-to-b from-gray-100/90 to-gray-50/90 flex items-center justify-between px-4 border-b border-gray-200/50 backdrop-blur-sm select-none shrink-0"
+            className={`window-header h-8 flex items-center justify-between px-4 border-b select-none shrink-0 ${
+              isActive 
+                ? 'bg-gradient-to-b from-gray-50/98 to-gray-100/98 border-gray-200/70' 
+                : 'bg-gradient-to-b from-gray-100/90 to-gray-200/90 border-gray-300/50'
+            }`}
             onDoubleClick={() => maximizeWindow(window.id)}
             onMouseDown={handleMouseDown} // Re-added native mouse down for dragging
-            style={{ cursor: isMaximized ? 'default' : (isDragging ? 'grabbing' : 'grab') }}
+            style={{ 
+              cursor: isMaximized ? 'default' : (isDragging ? 'grabbing' : 'grab'),
+              backdropFilter: isActive ? 'blur(25px)' : 'blur(15px)',
+              WebkitBackdropFilter: isActive ? 'blur(25px)' : 'blur(15px)'
+            }}
           >
             {/* Traffic Lights */}
-            <div className="traffic-lights flex items-center space-x-2 z-50">
+            <div className={`traffic-lights flex items-center space-x-2 z-50 transition-all duration-200 ${
+              !isActive ? 'grayscale opacity-50' : ''
+            }`}>
               <button
                 onClick={(e) => { e.stopPropagation(); closeWindow(window.id); }}
-                className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors relative group overflow-hidden"
+                className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-all duration-200 relative group overflow-hidden"
+                style={{ cursor: 'pointer' }}
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-red-400 to-red-600" />
-                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-red-900 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-red-400 to-red-600 shadow-sm" />
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] text-red-900 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-150">×</span>
               </button>
               
               <button
                 onClick={(e) => { e.stopPropagation(); minimizeWindow(window.id); }}
-                className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors relative group overflow-hidden"
+                className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-all duration-200 relative group overflow-hidden"
+                style={{ cursor: 'pointer' }}
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600" />
-                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-yellow-900 opacity-0 group-hover:opacity-100 transition-opacity">−</span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-sm" />
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] text-yellow-900 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-150">−</span>
               </button>
               
               <button
                 onClick={(e) => { e.stopPropagation(); maximizeWindow(window.id); }}
-                className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors relative group overflow-hidden"
+                className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-all duration-200 relative group overflow-hidden"
+                style={{ cursor: 'pointer' }}
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-green-400 to-green-600" />
-                <span className="absolute inset-0 flex items-center justify-center text-[10px] text-green-900 opacity-0 group-hover:opacity-100 transition-opacity">+</span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-green-400 to-green-600 shadow-sm" />
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] text-green-900 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-150">+</span>
               </button>
             </div>
             
             {/* Window Title */}
-            <div className="text-[13px] font-medium text-gray-700 absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
+            <div className={`text-[13px] font-semibold absolute left-1/2 transform -translate-x-1/2 pointer-events-none tracking-tight ${
+              isActive ? 'text-gray-800' : 'text-gray-600'
+            }`}>
               {window.title}
             </div>
             

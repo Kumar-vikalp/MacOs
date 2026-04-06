@@ -19,6 +19,7 @@ const Dock = () => {
     { id: 'calendar', name: 'Calendar', icon: '/icons/calendar.png', component: 'Calendar' },
     { id: 'photos', name: 'Photos', icon: '/icons/photos.png', component: 'Photos' },
     { id: 'settings', name: 'System Settings', icon: '/icons/settings.png', component: 'Settings' },
+    { id: 'appletv', name: 'Apple TV', icon: '/icons/appletv.png', component: 'AppleTv' },
     { id: 'terminal', name: 'Terminal', icon: '/icons/terminal.png', component: 'Terminal' },
     { id: 'developer', name: 'Developer', icon: '/icons/github.png', component: 'Developer' },
     { id: 'weather', name: 'Weather', icon: '/icons/weather.png', component: 'Weather' }, // New Weather app

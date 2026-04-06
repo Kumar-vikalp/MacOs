@@ -9,12 +9,14 @@ const snapToGrid = (x, y, gridSize = 20) => {
 };
 
 const defaultWallpapers = [
-  'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&h=1080&fit=crop',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
-  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop',
-  'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&h=1080&fit=crop',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
-  '/wallpaper/sana\'sKitty.jpg', // Add your local wallpaper here
+  '/wallpaper/red-and-purple-galaxy-sky.webp',
+  '/wallpaper/night-mode-dark-sand-with-specks-and-sparkles.webp',
+  '/wallpaper/minimalist-desktop-mountains-orange-blurry-soft-sky.webp',
+  '/wallpaper/japanese-white-cherry-blossom-flowers.webp',
+  '/wallpaper/elegance-hd-tree-leaves-close-up.webp',
+  '/wallpaper/dark-mode-wavy-minimalist.webp',
+  '/wallpaper/dark-mode-night-mode-minimalist-mountains-landscape.webp',
+  '/wallpaper/big-sur-graphic-2-Cn3eVevS.webp',
 ];
 
 

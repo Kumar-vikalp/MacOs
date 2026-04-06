@@ -4,18 +4,18 @@ import { FiGrid, FiHeart, FiShare, FiTrash2, FiChevronLeft, FiChevronRight, FiX,
 import { BsGrid3X3, BsHeart, BsHeartFill, BsImage, BsDisplay, BsLock, BsDownload } from "react-icons/bs";
 import useDesktopStore from '../../store/desktopStore';
 
+const dynamicPhotos = [];
+
 // Sample wallpaper images
-const SAMPLE_IMAGES = [
+const SAMPLE_IMAGES = dynamicPhotos.length > 0 ? dynamicPhotos : [
   'https://4kwallpapers.com/images/walls/thumbs_3t/5889.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/1455.jpg',
-  'https://4kwallpapers.com/images/walls/thumbs_2t/4026.jpg',
+  'https://4kwallpapers.com/images/walls/thumbs_3t/4026.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/24045.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/11577.jpeg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/24073.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/1432.jpg',
   'https://4kwallpapers.com/images/walls/thumbs_3t/8133.jpg',
-  '/wallpaper/sana\'sKitty.jpg', // Added local wallpaper
-  '/wallpaper/Vikalp.jpg', // Added local wallpaper
 ];
 
 const sidebarItems = [

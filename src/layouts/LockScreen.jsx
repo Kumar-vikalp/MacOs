@@ -5,8 +5,8 @@ export default function LockScreen({ goNext }) {
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [time, setTime] = useState(new Date());
   const [wallpaper, setWallpaper] = useState(() => 
-    localStorage.getItem("lockscreen_wallpaper") || "/wallpaper/sana'sKitty.jpg"
-  );
+  localStorage.getItem("lockscreen_wallpaper") || "/wallpaper/big-sur-graphic-2-Cn3eVevS.webp");
+
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);

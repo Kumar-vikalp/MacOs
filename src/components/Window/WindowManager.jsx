@@ -16,6 +16,7 @@ import Settings from '../Apps/Settings';
 import Terminal from '../Apps/Terminal';
 import Developer from '../Apps/Developer';
 import Weather from '../Apps/Weather'; // New import
+import AppleTv from '../Apps/AppleTv';
 
 const appComponents = {
   Finder,
@@ -31,6 +32,7 @@ const appComponents = {
   Terminal,
   Developer,
   Weather, // New app component
+  AppleTv,
 };
 
 const WindowManager = () => {

@@ -1,3 +1,4 @@
+https://puter.com/
 https://www.gucduck.com/
 https://hizkiajuan.com/
 https://www.macos-web.app/
